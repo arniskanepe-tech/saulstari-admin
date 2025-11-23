@@ -22,13 +22,13 @@
       </div>
 
       <div class="form-row">
-        <label>Interesēties (teksts, kas aizies uz kontaktiem – nav obligāts)</label>
-        <input type="text" name="interest_text" id="newInterestInput" placeholder="Piem., 'Intereses par Smiltis 0/4'" disabled />
+        <label>Piezīme (nav obligāta)</label>
+        <input type="text" name="note" placeholder="Papildu komentārs klientam" />
       </div>
 
       <div class="form-row">
         <label>Cena</label>
-        <input type="text" name="price" placeholder="8.00, 7.5, 8 €/m3 utt." />
+        <input type="text" name="price" placeholder="no 8.00, 7.50, 8 €/m3 utt." />
       </div>
 
       <div class="form-row">
@@ -38,7 +38,7 @@
 
       <div class="form-row">
         <label>Pieejamība</label>
-        <select name="availability" id="newAvailability">
+        <select name="availability">
           <option value="available">Pieejams</option>
           <option value="limited">Neliels daudzums</option>
           <option value="not_available">Šobrīd nav pieejams</option>
@@ -82,9 +82,9 @@
             <strong>${m.name || ""}</strong>
           </div>
 
-          <div class="material-interest-row">
-            <label>Interesēties</label>
-            <input type="text" class="interest-input" placeholder="Teksts, kas aizpildīsies kontaktu formā" value="${m.interest_text || ""}">
+          <div class="material-note-row">
+            <label>Piezīme</label>
+            <input type="text" class="note-input" placeholder="Papildu komentārs klientam" value="${m.note || ""}">
           </div>
 
           <div class="material-price-row">
@@ -120,7 +120,7 @@
       const select = div.querySelector(".availability-select");
       const statusDot = div.querySelector(".status-dot");
 
-      const interestInput = div.querySelector(".interest-input");
+      const noteInput = div.querySelector(".note-input");
       const priceInput = div.querySelector(".price-input");
       const unitInput = div.querySelector(".unit-input");
       const saveBtn = div.querySelector(".btn-save");
@@ -128,22 +128,9 @@
       const msgEl = div.querySelector(".item-msg");
       const updatedEl = div.querySelector(".updated-text");
 
-      function updateInterestState() {
-        if (select.value === "not_available") {
-          interestInput.disabled = false;
-          interestInput.classList.remove("disabled-input");
-        } else {
-          interestInput.disabled = true;
-          interestInput.classList.add("disabled-input");
-        }
-      }
-
-      updateInterestState();
-
       select.addEventListener("change", () => {
         const selected = formatAvailability(select.value);
         statusDot.className = "status-dot " + selected.color;
-        updateInterestState();
       });
 
       saveBtn.addEventListener("click", async () => {
@@ -153,7 +140,7 @@
             price: priceInput.value,
             unit: unitInput.value,
             availability: select.value,
-            interest_text: interestInput.value
+            note: noteInput.value
           };
           const res = await fetch(`/api/materials/${m.id}`, {
             method: "PUT",
@@ -212,21 +199,6 @@
     // Jaunā materiāla forma
     const newForm = document.getElementById("newMaterialForm");
     const newMsg = document.getElementById("newMaterialMsg");
-    const newAvailability = document.getElementById("newAvailability");
-    const newInterestInput = document.getElementById("newInterestInput");
-
-    function updateNewInterestState() {
-      if (newAvailability.value === "not_available") {
-        newInterestInput.disabled = false;
-        newInterestInput.classList.remove("disabled-input");
-      } else {
-        newInterestInput.disabled = true;
-        newInterestInput.classList.add("disabled-input");
-      }
-    }
-
-    newAvailability.addEventListener("change", updateNewInterestState);
-    updateNewInterestState();
 
     newForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -234,10 +206,10 @@
       const formData = new FormData(newForm);
       const body = {
         name: formData.get("name"),
+        note: formData.get("note"),
         price: formData.get("price"),
         unit: formData.get("unit"),
-        availability: formData.get("availability"),
-        interest_text: formData.get("interest_text")
+        availability: formData.get("availability")
       };
       try {
         const res = await fetch("/api/materials", {
@@ -249,7 +221,6 @@
         await res.json();
         newMsg.textContent = "Materiāls pievienots!";
         newForm.reset();
-        updateNewInterestState();
         loadMaterials();
       } catch (err) {
         console.error(err);
