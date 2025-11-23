@@ -21,7 +21,6 @@ function writeMaterials(list) {
 }
 
 function nowString() {
-  // vienkāršs datuma formāts: YYYY-MM-DD HH:MM
   const d = new Date();
   const iso = d.toISOString().slice(0, 16); // "2025-01-10T12:30"
   return iso.replace("T", " ");
@@ -41,7 +40,7 @@ app.get("/api/materials", (req, res) => {
 // POST jauns materiāls
 app.post("/api/materials", (req, res) => {
   const list = readMaterials();
-  const { name, price, unit, availability, note } = req.body;
+  const { name, price, unit, availability, interest_text } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: "Nosaukums ir obligāts" });
@@ -51,10 +50,10 @@ app.post("/api/materials", (req, res) => {
   const newItem = {
     id: maxId + 1,
     name,
-    price: Number(price) || 0,
+    price: price || "",
     unit: unit || "",
     availability: availability || "available", // available | limited | not_available
-    note: note || "",
+    interest_text: interest_text || "",
     updated_at: nowString()
   };
 
@@ -70,13 +69,13 @@ app.put("/api/materials/:id", (req, res) => {
   const idx = list.findIndex(m => m.id === id);
   if (idx === -1) return res.status(404).json({ error: "Materiāls nav atrasts" });
 
-  const { name, price, unit, availability, note } = req.body;
+  const { name, price, unit, availability, interest_text } = req.body;
 
   if (name !== undefined) list[idx].name = name;
-  if (price !== undefined) list[idx].price = Number(price) || 0;
+  if (price !== undefined) list[idx].price = price;
   if (unit !== undefined) list[idx].unit = unit;
   if (availability !== undefined) list[idx].availability = availability;
-  if (note !== undefined) list[idx].note = note;
+  if (interest_text !== undefined) list[idx].interest_text = interest_text;
 
   list[idx].updated_at = nowString();
 
