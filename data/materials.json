@@ -1,23 +1,29 @@
 [
   {
     "id": 1,
-    "name": "Smilts 0/4",
-    "price": 7.5,
+    "name": "Smilts",
+    "price": 8.00,
+    "unit": "€/m3",
     "availability": "available",
-    "updated_at": "2025-01-10 12:30"
+    "note": "",
+    "updated_at": "2025-10-28 13:46"
   },
   {
     "id": 2,
-    "name": "Melnezeme sij\u0101ta",
-    "price": 18.0,
-    "availability": "limited",
-    "updated_at": "2025-01-12 14:20"
+    "name": "Melnezeme",
+    "price": 11.00,
+    "unit": "€/m3",
+    "availability": "available",
+    "note": "",
+    "updated_at": "2025-10-28 13:46"
   },
   {
     "id": 3,
-    "name": "Grants 0/32",
-    "price": 9.0,
+    "name": "Šķembas 0/45",
+    "price": 7.50,
+    "unit": "€/t",
     "availability": "not_available",
-    "updated_at": "2025-01-09 08:50"
+    "note": "Šobrīd nav pieejams",
+    "updated_at": "2025-10-28 13:46"
   }
 ]
