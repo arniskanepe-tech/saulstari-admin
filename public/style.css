@@ -76,25 +76,49 @@ body {
 }
 
 .material-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
   font-size: 16px;
+  margin-bottom: 6px;
 }
 
-.material-price {
+.material-interest-row {
+  margin-bottom: 6px;
+}
+
+.material-interest-row label {
+  font-size: 13px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.material-interest-row .interest-input {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d6c8;
+  font-size: 13px;
+}
+
+.material-price-row {
   display: flex;
   gap: 4px;
   align-items: center;
+  margin-bottom: 4px;
 }
 
 .price-input {
-  width: 80px;
+  width: 100px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d6c8;
+  font-size: 13px;
 }
 
 .unit-input {
   width: 80px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d0d6c8;
+  font-size: 13px;
 }
 
 .material-updated {
@@ -134,16 +158,6 @@ body {
 .status-yellow { background: #e5b73b; }
 .status-red { background: #cc3b3b; }
 
-.note-row input {
-  width: 100%;
-  padding: 6px 8px;
-  border-radius: 8px;
-  border: 1px solid #d0d6c8;
-  font-size: 13px;
-}
-
-/* Buttons */
-
 .btn-row {
   display: flex;
   gap: 8px;
@@ -179,7 +193,11 @@ body {
   margin-top: 4px;
 }
 
-/* Public table (index.html) vienkārši lai neizjūk */
+.disabled-input {
+  background: #f1f3ed;
+}
+
+/* Public table (index.html) lai neizjūk */
 table {
   border-collapse: collapse;
   width: 100%;
@@ -197,11 +215,6 @@ th, td {
 @media (max-width: 768px) {
   .material-card {
     flex-direction: column;
-  }
-
-  .material-title {
-    flex-direction: column;
-    align-items: flex-start;
   }
 
   .admin-body {
