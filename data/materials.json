@@ -2,28 +2,28 @@
   {
     "id": 1,
     "name": "Smilts",
-    "price": 8.00,
+    "price": "8.00",
     "unit": "€/m3",
     "availability": "available",
-    "note": "",
+    "interest_text": "",
     "updated_at": "2025-10-28 13:46"
   },
   {
     "id": 2,
     "name": "Melnezeme",
-    "price": 11.00,
+    "price": "11.00",
     "unit": "€/m3",
     "availability": "available",
-    "note": "",
+    "interest_text": "",
     "updated_at": "2025-10-28 13:46"
   },
   {
     "id": 3,
     "name": "Šķembas 0/45",
-    "price": 7.50,
+    "price": "7.50",
     "unit": "€/t",
     "availability": "not_available",
-    "note": "Šobrīd nav pieejams",
+    "interest_text": "Intereses par materiālu Šķembas 0/45",
     "updated_at": "2025-10-28 13:46"
   }
 ]
