@@ -40,24 +40,32 @@ app.get("/api/materials", (req, res) => {
 // POST jauns materiāls
 app.post("/api/materials", (req, res) => {
   const list = readMaterials();
-  const { name, price, unit, availability, interest_text } = req.body;
+  const { name, price, unit, availability, note } = req.body;
 
   if (!name) {
     return res.status(400).json({ error: "Nosaukums ir obligāts" });
   }
 
   const maxId = list.reduce((max, m) => (m.id > max ? m.id : max), 0);
+  const ts = nowString();
+
   const newItem = {
     id: maxId + 1,
     name,
     price: price || "",
     unit: unit || "",
     availability: availability || "available", // available | limited | not_available
-    interest_text: interest_text || "",
-    updated_at: nowString()
+    note: note || "",
+    updated_at: ts
   };
 
   list.push(newItem);
+
+  // atjaunojam datumu VISIEM materiāliem
+  list.forEach(m => {
+    m.updated_at = ts;
+  });
+
   writeMaterials(list);
   res.status(201).json(newItem);
 });
@@ -69,15 +77,19 @@ app.put("/api/materials/:id", (req, res) => {
   const idx = list.findIndex(m => m.id === id);
   if (idx === -1) return res.status(404).json({ error: "Materiāls nav atrasts" });
 
-  const { name, price, unit, availability, interest_text } = req.body;
+  const { name, price, unit, availability, note } = req.body;
 
   if (name !== undefined) list[idx].name = name;
   if (price !== undefined) list[idx].price = price;
   if (unit !== undefined) list[idx].unit = unit;
   if (availability !== undefined) list[idx].availability = availability;
-  if (interest_text !== undefined) list[idx].interest_text = interest_text;
+  if (note !== undefined) list[idx].note = note;
 
-  list[idx].updated_at = nowString();
+  const ts = nowString();
+  // atjaunojam datumu visiem
+  list.forEach(m => {
+    m.updated_at = ts;
+  });
 
   writeMaterials(list);
   res.json(list[idx]);
@@ -91,6 +103,12 @@ app.delete("/api/materials/:id", (req, res) => {
   if (idx === -1) return res.status(404).json({ error: "Materiāls nav atrasts" });
 
   const removed = list.splice(idx, 1)[0];
+
+  const ts = nowString();
+  list.forEach(m => {
+    m.updated_at = ts;
+  });
+
   writeMaterials(list);
   res.json(removed);
 });
