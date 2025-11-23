@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Saulstari Admin</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Admin – Materiālu saraksts</h1>
+
+  <div id="materialList"></div>
+
+  <script>
+    fetch('/api/materials')
+      .then(res => res.json())
+      .then(data => {
+        const div = document.getElementById("materialList");
+        div.innerHTML = data.map(m => `
+          <div class="card">
+            <b>${m.name}</b><br>
+            Cena: ${m.price} €<br>
+            Statuss: <b>${m.availability}</b><br>
+            Update: ${m.updated_at}
+          </div>
+        `).join("");
+      });
+  </script>
+</body>
+</html>

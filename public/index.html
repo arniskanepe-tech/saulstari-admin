@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Saulstari — Materiāli</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Pieejamie materiāli</h1>
+
+  <table id="materialsTable">
+    <thead>
+      <tr>
+        <th>Nosaukums</th>
+        <th>Cena</th>
+        <th>Statuss</th>
+        <th>Pēdējās izmaiņas</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('/api/materials')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#materialsTable tbody");
+        data.forEach(m => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${m.name}</td>
+            <td>${m.price} €</td>
+            <td>${m.availability}</td>
+            <td>${m.updated_at}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>

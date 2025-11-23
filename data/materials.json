@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Smilts 0/4",
+    "price": 7.5,
+    "availability": "available",
+    "updated_at": "2025-01-10 12:30"
+  },
+  {
+    "id": 2,
+    "name": "Melnezeme sij\u0101ta",
+    "price": 18.0,
+    "availability": "limited",
+    "updated_at": "2025-01-12 14:20"
+  },
+  {
+    "id": 3,
+    "name": "Grants 0/32",
+    "price": 9.0,
+    "availability": "not_available",
+    "updated_at": "2025-01-09 08:50"
+  }
+]
