@@ -80,17 +80,17 @@ body {
   margin-bottom: 6px;
 }
 
-.material-interest-row {
+.material-note-row {
   margin-bottom: 6px;
 }
 
-.material-interest-row label {
+.material-note-row label {
   font-size: 13px;
   display: block;
   margin-bottom: 2px;
 }
 
-.material-interest-row .interest-input {
+.material-note-row .note-input {
   width: 100%;
   padding: 6px 8px;
   border-radius: 8px;
@@ -106,7 +106,7 @@ body {
 }
 
 .price-input {
-  width: 100px;
+  width: 120px;
   padding: 6px 8px;
   border-radius: 8px;
   border: 1px solid #d0d6c8;
@@ -158,6 +158,8 @@ body {
 .status-yellow { background: #e5b73b; }
 .status-red { background: #cc3b3b; }
 
+/* Buttons */
+
 .btn-row {
   display: flex;
   gap: 8px;
@@ -187,17 +189,14 @@ body {
   cursor: default;
 }
 
+/* Ziņojumi – sarkani, kā Tu gribēji */
 .status-msg {
   font-size: 12px;
-  color: #455449;
+  color: #cc3b3b;
   margin-top: 4px;
 }
 
-.disabled-input {
-  background: #f1f3ed;
-}
-
-/* Public table (index.html) lai neizjūk */
+/* Public table (index.html), lai neizjūk */
 table {
   border-collapse: collapse;
   width: 100%;
