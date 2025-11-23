@@ -1,29 +1,226 @@
 <!DOCTYPE html>
-<html>
+<html lang="lv">
 <head>
   <meta charset="UTF-8" />
-  <title>Saulstari Admin</title>
+  <title>Saulstari – Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <h1>Admin – Materiālu saraksts</h1>
+<body class="admin-body">
+  <header class="admin-header">
+    <h1>Saulstari – Materiālu administrācija</h1>
+    <p>Šeit vari pievienot, labot un dzēst materiālus, kā arī mainīt pieejamību.</p>
+  </header>
 
-  <div id="materialList"></div>
+  <!-- Jaunā materiāla forma -->
+  <section class="admin-section">
+    <h2>Pievienot jaunu materiālu</h2>
+    <form id="newMaterialForm" class="card form-card">
+      <div class="form-row">
+        <label>Nosaukums *</label>
+        <input type="text" name="name" required />
+      </div>
+      <div class="form-row">
+        <label>Cena</label>
+        <input type="number" step="0.01" name="price" />
+      </div>
+      <div class="form-row">
+        <label>Mērvienība</label>
+        <input type="text" name="unit" placeholder="€/m3, €/t utt." />
+      </div>
+      <div class="form-row">
+        <label>Pieejamība</label>
+        <select name="availability">
+          <option value="available">Pieejams</option>
+          <option value="limited">Neliels daudzums</option>
+          <option value="not_available">Šobrīd nav pieejams</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Piezīme</label>
+        <input type="text" name="note" placeholder="Papildu info klientam" />
+      </div>
+      <button type="submit" class="btn primary">Pievienot materiālu</button>
+      <p id="newMaterialMsg" class="status-msg"></p>
+    </form>
+  </section>
+
+  <!-- Esošie materiāli -->
+  <section class="admin-section">
+    <h2>Esošie materiāli</h2>
+    <div id="materialList"></div>
+    <p id="listMsg" class="status-msg"></p>
+  </section>
 
   <script>
-    fetch('/api/materials')
-      .then(res => res.json())
-      .then(data => {
-        const div = document.getElementById("materialList");
-        div.innerHTML = data.map(m => `
-          <div class="card">
-            <b>${m.name}</b><br>
-            Cena: ${m.price} €<br>
-            Statuss: <b>${m.availability}</b><br>
-            Update: ${m.updated_at}
+    const availabilityOptions = [
+      { value: "available", label: "Pieejams", color: "status-green" },
+      { value: "limited", label: "Neliels daudzums", color: "status-yellow" },
+      { value: "not_available", label: "Šobrīd nav pieejams", color: "status-red" }
+    ];
+
+    function formatAvailability(av) {
+      const found = availabilityOptions.find(o => o.value === av) || availabilityOptions[0];
+      return found;
+    }
+
+    function createMaterialCard(m) {
+      const av = formatAvailability(m.availability);
+
+      const div = document.createElement("div");
+      div.className = "card material-card";
+      div.dataset.id = m.id;
+
+      div.innerHTML = `
+        <div class="material-main">
+          <div class="material-title">
+            <strong>${m.name || ""}</strong>
+            <span class="material-price">
+              <input type="number" step="0.01" class="price-input" value="${m.price ?? ""}" /> 
+              <input type="text" class="unit-input" value="${m.unit || ""}" />
+            </span>
           </div>
-        `).join("");
+          <div class="material-updated">
+            Atjaunots: <span class="updated-text">${m.updated_at || "-"}</span>
+          </div>
+        </div>
+
+        <div class="material-side">
+          <div class="availability-label">Pieejamība:</div>
+          <div class="availability-control">
+            <span class="status-dot ${av.color}"></span>
+            <select class="availability-select">
+              ${availabilityOptions.map(o => `
+                <option value="${o.value}" ${o.value === m.availability ? "selected" : ""}>
+                  ${o.label}
+                </option>
+              `).join("")}
+            </select>
+          </div>
+          <div class="note-row">
+            <input type="text" class="note-input" placeholder="Piezīme (piem., 'interesēties')" value="${m.note || ""}">
+          </div>
+          <div class="btn-row">
+            <button class="btn primary btn-save">Saglabāt</button>
+            <button class="btn danger btn-delete">Dzēst</button>
+          </div>
+          <p class="status-msg item-msg"></p>
+        </div>
+      `;
+
+      const select = div.querySelector(".availability-select");
+      const statusDot = div.querySelector(".status-dot");
+
+      select.addEventListener("change", () => {
+        const selected = formatAvailability(select.value);
+        statusDot.className = "status-dot " + selected.color;
       });
+
+      const saveBtn = div.querySelector(".btn-save");
+      const deleteBtn = div.querySelector(".btn-delete");
+      const priceInput = div.querySelector(".price-input");
+      const unitInput = div.querySelector(".unit-input");
+      const noteInput = div.querySelector(".note-input");
+      const msgEl = div.querySelector(".item-msg");
+      const updatedEl = div.querySelector(".updated-text");
+
+      saveBtn.addEventListener("click", async () => {
+        msgEl.textContent = "Saglabāju...";
+        try {
+          const body = {
+            price: priceInput.value,
+            unit: unitInput.value,
+            availability: select.value,
+            note: noteInput.value
+          };
+          const res = await fetch(`/api/materials/${m.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          if (!res.ok) throw new Error("Neizdevās saglabāt");
+          const updated = await res.json();
+          updatedEl.textContent = updated.updated_at || "";
+          msgEl.textContent = "Saglabāts!";
+        } catch (err) {
+          console.error(err);
+          msgEl.textContent = "Kļūda saglabājot.";
+        }
+      });
+
+      deleteBtn.addEventListener("click", async () => {
+        if (!confirm("Vai tiešām dzēst šo materiālu?")) return;
+        msgEl.textContent = "Dzēšu...";
+        try {
+          const res = await fetch(`/api/materials/${m.id}`, {
+            method: "DELETE"
+          });
+          if (!res.ok) throw new Error("Neizdevās dzēst");
+          div.remove();
+        } catch (err) {
+          console.error(err);
+          msgEl.textContent = "Kļūda dzēšot.";
+        }
+      });
+
+      return div;
+    }
+
+    async function loadMaterials() {
+      const listDiv = document.getElementById("materialList");
+      const listMsg = document.getElementById("listMsg");
+      listDiv.innerHTML = "";
+      listMsg.textContent = "Ielādēju materiālus...";
+
+      try {
+        const res = await fetch("/api/materials");
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          listMsg.textContent = "Pašlaik nav neviena materiāla.";
+          return;
+        }
+        listMsg.textContent = "";
+        data.forEach(m => listDiv.appendChild(createMaterialCard(m)));
+      } catch (err) {
+        console.error(err);
+        listMsg.textContent = "Kļūda ielādējot materiālus.";
+      }
+    }
+
+    // Jaunā materiāla forma
+    const newForm = document.getElementById("newMaterialForm");
+    const newMsg = document.getElementById("newMaterialMsg");
+
+    newForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      newMsg.textContent = "Pievienoju...";
+      const formData = new FormData(newForm);
+      const body = {
+        name: formData.get("name"),
+        price: formData.get("price"),
+        unit: formData.get("unit"),
+        availability: formData.get("availability"),
+        note: formData.get("note")
+      };
+      try {
+        const res = await fetch("/api/materials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error("Neizdevās pievienot");
+        await res.json();
+        newMsg.textContent = "Materiāls pievienots!";
+        newForm.reset();
+        loadMaterials();
+      } catch (err) {
+        console.error(err);
+        newMsg.textContent = "Kļūda pievienojot.";
+      }
+    });
+
+    // Startā ielādē materiālus
+    loadMaterials();
   </script>
 </body>
 </html>
